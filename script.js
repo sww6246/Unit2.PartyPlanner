@@ -5,17 +5,17 @@ const state = {
     newEvent: {}
 }
 
-const currParties = document.querySelector("#event-list");  // This is where events will be rendered
+const currParties = document.querySelector("#event-list");  
 const button = document.querySelector("#button");
 const eventForm = document.querySelector("#event-form");
 
 const render = (content) => {
-    // Ensure currParties is used to append the events
-    currParties.innerHTML = "";  // Clear current events before adding new ones
+   
+    currParties.innerHTML = "";  
 
     if (Array.isArray(content)) {
         content.forEach((event) => {
-            // Make sure event properties exist before trying to access them
+            
             if (event.name && event.description && event.location && event.date) {
                 const card = document.createElement('div');
                 card.classList.add('card');
@@ -43,11 +43,11 @@ const getEvents = async () => {
         const res = await fetch(apiUrl);
         const data = await res.json();
 
-        // Log the response to check the structure of the API data
+        
         console.log("API response data:", data);
 
         if (data && Array.isArray(data.data)) {
-            // The events are inside data.data, not data.results
+            
             state.allEvents = data.data;
             render(state.allEvents);
         } else {
@@ -58,7 +58,7 @@ const getEvents = async () => {
     }
 };
 
-// Handle deleting events
+
 const handleDeleteEvent = async (event) => {
     const button = event.target;
     if (button.classList.contains('delete')) {
@@ -68,7 +68,7 @@ const handleDeleteEvent = async (event) => {
                 method: 'DELETE'
             });
             if (res.ok) {
-                // Remove the deleted event from the state and re-render
+                
                 state.allEvents = state.allEvents.filter(ev => ev.id !== Number(eventId));
                 render(state.allEvents);
             }
@@ -78,20 +78,19 @@ const handleDeleteEvent = async (event) => {
     }
 };
 
-// Event listener for delete buttons
+
 currParties.addEventListener('click', handleDeleteEvent);
 
-// Event listener for form submission to add a new event
-eventForm.addEventListener('submit', async (event) => {
-    event.preventDefault();  // Prevent page reload on form submit
 
+eventForm.addEventListener('submit', async (event) => {
+    event.preventDefault(); 
     // Get form data
     const eventName = document.querySelector("#event-name").value;
     const eventDescription = document.querySelector("#event-description").value;
-    const eventDate = new Date(document.querySelector("#event-date").value).toISOString(); // Ensure ISO format
+    const eventDate = new Date(document.querySelector("#event-date").value).toISOString(); 
     const eventLocation = document.querySelector("#event-location").value;
 
-    // Create a new event object
+    
     const newEvent = {
         name: eventName,
         description: eventDescription,
@@ -99,11 +98,11 @@ eventForm.addEventListener('submit', async (event) => {
         location: eventLocation
     };
 
-    // Log the new event data to the console for debugging
+    
     console.log("New event data:", newEvent);
 
     try {
-        // Send a POST request to the API to add the new event
+      
         const res = await fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -112,16 +111,16 @@ eventForm.addEventListener('submit', async (event) => {
             body: JSON.stringify(newEvent)
         });
 
-        // Log the response body for additional debugging
+        
         const responseBody = await res.json();
         console.log("API response body:", responseBody);
 
         // Check if the POST request was successful
         if (res.ok) {
-            // Clear the form after submitting
+            
             eventForm.reset();
             
-            // Fetch and render the updated event list
+            
             getEvents();
         } else {
             console.error("Error adding event:", responseBody);
